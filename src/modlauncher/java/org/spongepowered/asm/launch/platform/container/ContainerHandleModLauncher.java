@@ -24,9 +24,10 @@
  */
 package org.spongepowered.asm.launch.platform.container;
 
+import cpw.mods.jarhandling.SecureJar;
+
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Map.Entry;
 
 /**
  * ModLauncher root container
@@ -81,9 +82,12 @@ public class ContainerHandleModLauncher extends ContainerHandleVirtual {
      * 
      * @param resources Resources to add
      */
-    public void addResources(List<Entry<String, Path>> resources) {
-        for (Entry<String, Path> resource : resources) {
-            this.addResource(resource.getKey(), resource.getValue());
+    public void addResources(List<SecureJar> resources) {
+        for (SecureJar resource : resources) {
+            if (!resource.getPrimaryPath().getFileSystem().provider().getScheme().equals("file")) {
+                continue;
+            }
+            this.addResource(resource.name(), resource.getPrimaryPath());
         }
     }
     
